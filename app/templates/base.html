@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../static/images/favicon_16.ico"/>
+    <link rel="bookmark" href="../static/images/favicon_16.ico"/>
+    <title>
+        {% if title %}
+            {{ title }} - WVS 控制中心
+        {% else %}
+            WVS 控制中心
+        {%endif%}
+    </title>
+    <link rel="stylesheet" type="text/css" href="../static/css/site.css" />
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css" />
+    <script src="../static/js/jquery-3.3.1.js"></script>
+    <script src="../static/js/modernizr-2.6.2.js"></script>
+    <script src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="{{ url_for('main.index') }}" class="navbar-brand">WVS控制中心</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for("task.index") }}">任务管理</a></li>
+                    <li><a href="#">配置中心</a></li>
+                    <li><a href="#">监控中心</a></li>
+                    <li><a href="#">扫描结果</a></li>
+                    <li><a href="#">使用说明</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        {% block content %}{% endblock %}
+        <hr />
+        <footer>
+            <p>&copy; {{ year }} - Web漏洞扫描集中管控系统</p>
+        </footer>
+    </div>
+    <script src="../static/js/jquery-3.3.1.js"></script>
+    <script src="../static/js/bootstrap.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

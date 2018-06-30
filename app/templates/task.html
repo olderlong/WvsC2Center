@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script>
+   function getCookie(cname){
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++){
+            var c = ca[i].trim();
+            if (c.indexOf(name)==0)
+                return c.substring(name.length,c.length);
+        }
+        return "";
+    }
+    function setCookie(cname,cvalue,exdays)
+    {
+      var d = new Date();
+      d.setTime(d.getTime()+(exdays*24*60*60*1000));
+      var expires = "expires="+d.toGMTString();
+      document.cookie = cname + "=" + cvalue + "; " + expires;
+    }
+    function restart_scan(name) {
+        var server_state = getCookie("ServerState")
+        if (server_state == "Started") {
+            setCookie("ScanState", "Started", 1)
+            var url = window.location.href
+            console.log(url)
+            url = url + "/restart/" + name
+            window.location = url
+        }
+        else {
+            alert("服务器未启动")
+        }
+    }
+</script>
+<h2>{{ title }}</h2>
+<h3>{{ message }}</h3>
+<div class="content-row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+
+            </div>
+            <div class="panel-options">
+                <a class="bg" data-target="#sample-modal-dialog-1" data-toggle="modal" href="#sample-modal"><i class="entypo-cog"></i></a>
+                <a data-rel="collapse" href="#"><i class="entypo-down-open"></i></a>
+                <a data-rel="close" href="#!/tasks" ui-sref="Tasks"><i class="entypo-cancel"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+
+              <form role="form" action="/task/", method="POST">
+                  {% from "formhelper.html" import render_field %}
+                      <div class="form-group">
+                          {{ render_field(NewTaskForm.Name,class="form-control",id="Name",placeholder="Task_Name") }}
+                      </div>
+                      <div class="form-group">
+                          {{ render_field(NewTaskForm.StartURL,class="form-control",id="Name",placeholder="Task_Name") }}
+                      </div>
+                      <div class="form-group">
+                            {{ render_field(NewTaskForm.ScanPolicy,class="form-control",id="Name",placeholder="Task_Name") }}
+                      </div>
+                  {{ NewTaskForm.submit(class="btn btn-default") }}
+              </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 ">
+    <div class="panel panel-primary plain toggle panelClose panelRefresh" id="spr_1"  style="margin: 0px; padding: 0px;">
+                                <!-- Start .panel -->
+        <div class="panel-heading white-bg">
+            <h4 class="panel-title">任务列表</h4>
+            <div class="panel-controls panel-controls-hide" style="display: none;">
+                <a href="#" class="panel-refresh"><i class="im-spinner6"></i></a>
+                <a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a>
+                <a href="#" class="panel-close"><i class="im-close"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: 100%; height: auto;">
+                <div class="table-responsive" style="overflow: hidden; width: 100%; height: auto;">
+                    <table class="table table-bordered table-hover" id="wvs_result_table" >
+                        <thead>
+                            <tr>
+                                <th  width="5%">#</th>
+                                <th class="per40" width="10%">任务名称</th>
+                                <th class="per15"  width="20%">目标URL</th>
+                                <th class="per15"  width="10%">扫描策略</th>
+                                <th class="per15" width="15%">任务时间</th>
+                                <th class="per15" width="20%">结果信息</th>
+                                <th class="per15" >操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wvs_result_table_body">
+                                {% for task_info in task_info_list %}
+                                <tr class="active" id='Task_{{ task_info["TaskName"] }}'>
+                                    <td>{{loop.index}}</td>
+                                    <td>{{ task_info["TaskName"] }}</td>
+                                    <td>{{ task_info["ScanSetting"] }}</td>
+                                    <td>{{ task_info["ScanSetting"]}}</td>
+                                    <td>{{ task_info["Timestamp"] }}</td>
+                                    <td>a</td>
+                                    <td>a</td>
+
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{% endblock %}
