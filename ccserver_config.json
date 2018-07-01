@@ -1,0 +1,6 @@
+{
+  "ServerIP":"192.168.3.2",
+  "ServerPort": 6000,
+  "Protocol": "UDP",
+  "STATE_UPDATE_INTERVAL": 5
+}

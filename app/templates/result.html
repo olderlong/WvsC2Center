@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+    var wvs_result_id = 0;
+
+    function wvs_result_update(){
+        namespace = "/wvs_result";
+        var socket = io.connect(location.protocol+"//"+document.domain + ":" + location.port + namespace);
+        console.log(location.protocol+"//"+document.domain + ":" + location.port + namespace);
+        socket.on("wvs_result_update", function(agent_state_json){
+            console.log(agent_state_json);
+            update_wvs_result(agent_state_json)
+        })
+    }
+
+    function get_time_str(f_seconds) {
+        var d = new Date();
+        d.setTime(Math.floor(f_seconds*1000));
+        var time_str = d.getFullYear().toString() + "/"
+            +d.getMonth().toString()+ "/"
+            +d.getDate().toString()+ " "
+            +d.getHours().toString()+ ":"
+            +d.getMinutes().toString()+ ":"
+            +d.getSeconds().toString()+ "::"
+            +d.getMilliseconds().toString()
+        return   time_str
+    }
+    var update_wvs_result = function (data) {
+        var tr_id = "Result_"+data["VulType"]+"_"+data["VulUrl"]
+        if($("tr[id='"+tr_id+"']").length>0){
+            console.log("is exist")
+
+        }
+        else{
+            add_wvs_result(data)
+        }
+    }
+
+    var add_wvs_result = function (data) {
+        var tr_id = "Result_"+data["VulType"]+"_"+data["VulUrl"]
+        var selector ="tbody[id='wvs_result_table_body']" + " > tr"
+
+
+        wvs_result_id = $(selector).length + 1
+        var vul_details = " <table class=\"table table-condensed table-hover\" id=\"vul_detail\" style=\"word-break:break-all; word-wrap:break-spaces;\">\n" +
+            "                                        <thead>\n" +
+            "                                            <tr>\n" +
+            "                                                <th class=\"per40\" width=\"40%\">参数变异</th>\n" +
+            "                                                <th class=\"per15\" width=\"40%\">漏洞原因</th>\n" +
+            "                                                <th class=\"per15\">CWE</th>\n" +
+            "                                                <th class=\"per15\">CVE</th>\n" +
+            "                                            </tr>\n" +
+            "                                        </thead>\n" +
+            "                                        <tbody>\n"
+
+        $.each(data["VulDetails"], function(i, value){
+            tr_str = "<tr class='info'>\n" +
+                "<td>"+value["url_param_variant"]+"</td>\n" +
+                "<td>"+value["vul_reasoning"]+"</td>\n" +
+                "<td>"+value["CWE"]+"</td>\n" +
+                "<td>"+value["CVE"]+"</td>\n" +
+                "</tr>"
+
+            vul_details = vul_details + tr_str
+        });
+        vul_details  = vul_details +"</tbody></table>"
+
+        var new_result = "<tr id='"+tr_id +"' class='active'>\n" +
+            "<td>"+ wvs_result_id.toString()+"</td>\n" +
+            " <td>"+data["VulUrl"] +"</td>\n" +
+            "  <td>"+ data["VulType"]+"</td>\n" +
+            " <td>"+ data["VulSeverity"] +"</td>\n" +
+            " <td>"+ vul_details +"</td>\n" +
+            " </tr>"
+
+        $("tbody#wvs_result_table_body").append(new_result);
+    }
+    function gen_report(){
+        var d = new Date()
+        // document.write(d.getTime() + " milliseconds since 1970/01/01")
+        var url = location.protocol+"//"+document.domain + ":" + location.port +"/result/report/"
+        console.log(url)
+        url = url+ d.getTime().toString()
+        window.location = url
+    }
+    function save_result(){
+        var url = location.protocol+"//"+document.domain + ":" + location.port +"/result/save"
+        window.location = url
+    }
+    $(document).ready(function(){
+        wvs_result_update()
+        // add_wvs_agent_state(data)
+    });
+
+
+</script>
+
+<h2>{{ title }}.</h2>
+<h3>{{ message }}</h3>
+
+<div class="row">
+    <div class="col-lg-12 ">
+        <div class="panel panel-primary plain toggle panelClose panelRefresh" id="spr_1"  style="margin: 0px; padding: 0px;">
+            <div class="panel-heading white-bg">
+                <h4 class="panel-title">Web漏扫代理运行状态</h4>
+                <div class="panel-controls panel-controls-hide" style="display: none;">
+                    <a href="#" class="panel-refresh"><i class="im-spinner6"></i></a>
+                    <a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a>
+                    <a href="#" class="panel-close"><i class="im-close"></i></a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-6"><a href="javascript:void(0);" onclick=gen_report()>生成报告</a></div>
+                    <div class="col-lg-6"><a href="javascript:void(0);" onclick=save_result()>保存结果</a></div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+
+    <hr/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 ">
+    <div class="panel panel-primary plain toggle panelClose panelRefresh" id="spr_1"  style="margin: 0px; padding: 0px;">
+                                <!-- Start .panel -->
+        <div class="panel-heading white-bg">
+            <h4 class="panel-title">扫描结果</h4>
+            <div class="panel-controls panel-controls-hide" style="display: none;">
+                <a href="#" class="panel-refresh"><i class="im-spinner6"></i></a>
+                <a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a>
+                <a href="#" class="panel-close"><i class="im-close"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: 100%; height: auto;">
+                <div class="table-responsive" style="overflow: hidden; width: 100%; height: auto;">
+                    <table class="table table-bordered table-hover" id="wvs_result_table" >
+                        <thead>
+                            <tr>
+                                <th  width="5%">#</th>
+                                <th class="per40" width="10%">漏洞类型</th>
+                                <th class="per15"  width="10%">漏洞URL</th>
+                                <th class="per15"  width="5%">漏洞级别</th>
+                                <th class="per15" width="70%">漏洞信息</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wvs_result_table_body">
+                        {% for res in scan_result_list %}
+                                <tr class="active" id='Result_{{ res["VulType"] }}_{{res["VulUrl"]}}'>
+                                    <td>{{loop.index}}</td>
+                                    <td>{{res["VulUrl"]}}</td>
+                                    <td>{{res["VulType"]}}</td>
+                                    <td>{{res["VulSeverity"]}}</td>
+                                    <td>
+                                    <table class="table table-condensed table-hover" id="vul_detail_{{loop.index}}" style="word-break:break-all; word-wrap:break-spaces;">
+                                        <thead>
+                                            <tr>
+                                                <th class="per40" width="40%">参数变异</th>
+                                                <th class="per15" width="40%">漏洞原因</th>
+                                                <th class="per15">CWE</th>
+                                                <th class="per15">CVE</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for vul_detail in res["VulDetails"] %}
+                                            <tr class="info">
+                                                <td>{{vul_detail["url_param_variant"]}}</td>
+                                                <td>{{vul_detail["vul_reasoning"]}}</td>
+                                                <td>{{vul_detail["CWE"]}}</td>
+                                                <td>{{vul_detail["CVE"]}}</td>
+                                            </tr>
+                                         {% endfor %}
+                                        </tbody>
+                                    </table>
+                                        </td>
+
+                                </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<p>Use this area to provide additional information.</p>
+
+{% endblock %}

@@ -80,7 +80,7 @@ class ScanTaskManager(object):
         for task in self.scan_task_list:
             task_dict[task[0]] = task[1]
 
-        with open(self.scan_tasks_file, 'w', encoding='utf-8') as wf:
+        with open(self.task_list_file, 'w', encoding='utf-8') as wf:
             json.dump(task_dict, wf)
 
     def del_task(self, task_name):
@@ -96,7 +96,7 @@ class ScanTaskManager(object):
 
             self.scan_task_list.remove(task)
 
-            self.save_task_list()
+            self.__save_task_list()
             ScanSetting().set_scan_setting("","Normal","")
             ScanResult().clear_result_list()
         else:
@@ -123,7 +123,6 @@ class ScanTaskManager(object):
                                                     time.localtime(float(task_info_dict["Timestamp"])))
                 task_info_list.append(task_info_dict)
 
-            log.info(task_info_list)
             return task_info_list, len(task_info_list)
         else:
             return None, 0

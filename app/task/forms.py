@@ -24,7 +24,8 @@ class NewScanTaskForm(FlaskForm):
         ('Quick', 'Quick'),
         ('Full', 'Full'),
     ], validators=[DataRequired()], default='Normal')
-    submit = SubmitField('新建任务')
+    submit_new = SubmitField('新建任务')
+    submit_new_and_start = SubmitField('新建任务并运行')
     #
     # def __init__(self, name="", url="", policy="Normal"):
     #     pass

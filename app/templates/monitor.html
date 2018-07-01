@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>{{ title }}.</h2>
+<h3>{{ message }}</h3>
+<script>
+    function start_agent_state_update(){
+        namespace = "/agent_state_ns";
+        var socket = io.connect(location.protocol+"//"+document.domain + ":" + location.port + namespace);
+        console.log(location.protocol+"//"+document.domain + ":" + location.port + namespace);
+        socket.on("agent_state_update", function(agent_state_json){
+            console.log(agent_state_json);
+            update_agent_state(agent_state_json)
+        })
+    }
+    function start_wvs_state_update(){
+        namespace = "/wvs_state_ns";
+        var socket = io.connect(location.protocol+"//"+document.domain + ":" + location.port + namespace);
+        console.log(location.protocol+"//"+document.domain + ":" + location.port + namespace);
+        socket.on("wvs_state_update", function(wvs_state_json){
+            console.log(wvs_state_json);
+            update_wvs_state(wvs_state_json)
+        })
+    }
+    function get_time_str(f_seconds) {
+        var d = new Date();
+        d.setTime(Math.floor(f_seconds*1000));
+        var time_str = d.getFullYear().toString() + "/"
+            +d.getMonth().toString()+ "/"
+            +d.getDate().toString()+ " "
+            +d.getHours().toString()+ ":"
+            +d.getMinutes().toString()+ ":"
+            +d.getSeconds().toString()+ "::"
+            +d.getMilliseconds().toString()
+        return   time_str
+    }
+    var update_agent_state = function (data) {
+        var tr_id = "Agent_"+data["Name"]+"_"+data["Address"][0]
+        if($("tr[id='"+tr_id+"']").length>0){
+            console.log("is exist")
+
+            var selector = "tr[id='"+tr_id+"']" + "> td:nth-child(4)"
+            // $(selector).text( data["Timestamp"].toString())
+            $(selector).text( data["Timestamp"])
+
+            var selector ="tr[id='"+tr_id+"']" + "> td:nth-child(5)"
+            $(selector).text( data["State"].toString())
+
+            if (data["State"]=="Offline")
+                $("tr[id='"+tr_id+"']").attr("class","warning")
+            else if(data["State"]=="Online")
+                $("tr[id='"+tr_id+"']").attr("class","active")
+            else if(data["State"]=="Dead")
+                $("tr[id='"+tr_id+"']").attr("class","danger")
+            else
+                $("tr[id='"+tr_id+"']").attr("class","info")
+        }
+        else{
+            add_agent_state(data)
+        }
+    }
+
+    var add_agent_state = function (data) {
+        var tr_id = "Agent_"+ data["Name"]+"_"+data["Address"][0]
+
+        var newstate = "<tr id='"+tr_id +"'>\n" +
+            " <td>"+data["Name"] +"</td>\n" +
+            "  <td>"+ data["Address"][0] +"</td>\n" +
+            " <td>"+ data["Address"][1] +"</td>\n" +
+            " <td>"+ data["Timestamp"] +"</td>\n" +
+            " <td>"+ data["State"] +"</td>\n" +
+            " </tr>"
+
+        $("tbody#agent_state_table_body").append(newstate);
+
+        if (data["State"]=="Offline")
+            $("tr[id='"+tr_id+"']").addClass("warning")
+        else if(data["State"]=="Online")
+            $("tr[id='"+tr_id+"']").addClass("active")
+        else if(data["State"]=="Dead")
+            $("tr[id='"+tr_id+"']").addClass("danger")
+        else
+            $("tr[id='"+tr_id+"']").addClass("info")
+    }
+    var update_wvs_state = function(data){
+        var tr_id = "WVS_"+ data["Name"]+"_"+data["Address"][0]
+        if($("tr[id='"+tr_id+"']").length>0){
+            console.log("is exist")
+
+            var selector = "tr[id='"+tr_id+"']" + "> td:nth-child(4)"
+            // $(selector).text( data["Timestamp"].toString())
+            $(selector).text( data["Timestamp"])
+
+            var selector ="tr[id='"+tr_id+"']" + "> td:nth-child(5)"
+            $(selector).text( data["State"].toString())
+        }
+        else{
+            add_wvs_state(data)
+        }
+    }
+    var add_wvs_state = function(data){
+        var tr_id = "WVS_"+  data["Name"]+"_"+data["Address"][0]
+
+        var newstate = "<tr id='"+tr_id +"'>\n" +
+            " <td>"+data["Name"] +"</td>\n" +
+            "  <td>"+ data["Address"][0] +"</td>\n" +
+            " <td>"+ data["Address"][1] +"</td>\n" +
+            " <td>"+data["Timestamp"] +"</td>\n" +
+            " <td>"+ data["State"] +"</td>\n" +
+            " </tr>"
+
+        $("tbody#wvs_state_table_body").append(newstate);
+        $("tr[id='"+tr_id+"']").addClass("active")
+    }
+
+    $(document).ready(function(){
+        start_agent_state_update()
+        start_wvs_state_update()
+    });
+</script>
+
+<div class="row">
+    <div class="col-lg-6">
+        <!-- col-lg-6 start here -->
+        <div class="panel panel-info toggle panelRefresh" id="spr_6">
+            <!-- Start .panel -->
+            <div class="panel-heading">
+                <h4 class="panel-title">系统参数</h4>
+                <div class="panel-controls panel-controls-hide" style="display: none;">
+                    <a href="#" class="panel-refresh"><i class="im-spinner6"></i></a>
+                    <a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a>
+                </div>
+            </div>
+            <div class="panel-body"  style="margin: 0px; padding: 0px;">
+                <form action="#" class="form-horizontal">
+                    <div class="form-group" style="margin: 0px; padding: 0px;">
+                        <label class="col-lg-4 control-label">控制中心IP</label>
+                        <div class="col-lg-8">
+                            <label class="col-lg-8 control-label">{{server_config.IP}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0px; padding: 0px;">
+                        <label class="col-lg-4 control-label">控制中心监听端口</label>
+                        <div class="col-lg-8">
+                            <label class="col-lg-8 control-label">{{server_config.Port}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0px; padding: 0px;">
+                        <label class="col-lg-4 control-label">通信协议</label>
+                        <div class="col-lg-8">
+                            <label class="col-lg-8 control-label">{{server_config.Protocol}}</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <!-- col-lg-6 start here -->
+        <div class="panel panel-info toggle panelRefresh" id="spr_6">
+            <!-- Start .panel -->
+            <div class="panel-heading">
+                <h4 class="panel-title">扫描参数</h4>
+                <div class="panel-controls panel-controls-hide" style="display: none;"><a href="#" class="panel-refresh"><i class="im-spinner6"></i></a><a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a></div></div>
+            <div class="panel-body"  style="margin: 0px; padding: 0px;">
+                <form action="#" class="form-horizontal" >
+                    <div class="form-group" style="margin: 0px; padding: 0px;" >
+                        <label class="col-lg-3 control-label" >扫描起始URL</label>
+                        <div class="col-lg-9">
+                            <label class="control-label">{{scan_config[1]}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0px; padding: 0px;">
+                        <label class="col-lg-3 control-label">扫描策略</label>
+                        <div class="col-lg-9">
+                            <label class="control-label">{{scan_config[2]}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0px; padding: 0px;">
+                        <label class="col-lg-3 control-label">&nbsp;</label>
+                        <div class="col-lg-9">
+                            <label class="control-label">&nbsp;</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-10" style="margin: 0px; padding: 0px;">
+
+    </div>
+
+    <div class="col-lg-2" style="margin: 0px; padding: 0px;">
+              <form role="form" action="{{ url_for("monitor.index") }}", method="POST">
+                    {% if scan_state == "Stopped" %}
+                      {{ scan_control_form.submit_start_scan(class="btn btn-default") }}&nbsp;&nbsp;&nbsp;
+                      {{ scan_control_form.submit_stop_scan(class="btn btn-default",disabled="true") }}
+                    {% elif scan_state == "Started" %}
+                      {{ scan_control_form.submit_start_scan(class="btn btn-default",disabled="true") }}&nbsp;&nbsp;&nbsp;
+                      {{ scan_control_form.submit_stop_scan(class="btn btn-default") }}
+                    {% endif %}
+              </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+    <h4 class="page-header"><i class="im-table2"></i> 运行状态</h4>
+    </div>
+    <div class="col-lg-12 ">
+    <div class="panel panel-primary plain toggle panelClose panelRefresh" id="spr_1"  style="margin: 0px; padding: 0px;">
+                                <!-- Start .panel -->
+        <div class="panel-heading white-bg">
+            <h4 class="panel-title">Web漏扫代理运行状态</h4>
+            <div class="panel-controls panel-controls-hide" style="display: none;">
+                <a href="#" class="panel-refresh"><i class="im-spinner6"></i></a>
+                <a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a>
+                <a href="#" class="panel-close"><i class="im-close"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: 100%; height: auto;">
+                <div class="table-responsive" style="overflow: hidden; width: 100%; height: auto;">
+                    <table class="table table-bordered table-hover" id="agent_state_table">
+                        <thead>
+                            <tr>
+                                <th class="per40">代理名称</th>
+                                <th class="per40">代理IP地址</th>
+                                <th class="per15">代理端口</th>
+                                <th class="per15">状态时标</th>
+                                <th class="per15">代理状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agent_state_table_body">
+                        {% for agent_state in agent_state_list %}
+                            {% if agent_state['State'] == "Online" %}
+                                 <tr class="active" id="Agent_{{ agent_state['Name']}}_{{ agent_state['Address'][0] }}">
+                                    <td>{{agent_state['Name']}}</td>
+                                    <td>{{agent_state['Address'][0]}}</td>
+                                    <td>{{agent_state['Address'][1]}}</td>
+                                    <td>{{agent_state['Timestamp']}}</td>
+                                    <td>{{agent_state['State']}}</td>
+                                </tr>
+                            {% elif agent_state['State'] == "Offline" %}
+                                <tr class="warning" id="Agent_{{ agent_state['Name']}}_{{ agent_state['Address'][0] }}">
+                                    <td>{{agent_state['Name']}}</td>
+                                    <td>{{agent_state['Address'][0]}}</td>
+                                    <td>{{agent_state['Address'][1]}}</td>
+                                    <td>{{agent_state['Timestamp']}}</td>
+                                    <td>{{agent_state['State']}}</td>
+                                </tr>
+                            {% elif agent_state['State'] == "Dead" %}
+                                <tr class="danger" id="Agent_{{ agent_state['Name']}}_{{ agent_state['Address'][0] }}">
+                                    <td>{{agent_state['Name']}}</td>
+                                    <td>{{agent_state['Address'][0]}}</td>
+                                    <td>{{agent_state['Address'][1]}}</td>
+                                    <td>{{agent_state['Timestamp']}}</td>
+                                    <td>{{agent_state['State']}}</td>
+                                </tr>
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="col-lg-12">
+    <hr/>
+    </div>
+    <div class="col-lg-12 ">
+        <div class="panel panel-primary plain toggle panelClose panelRefresh" id="spr_1"  style="margin: 0px; padding: 0px;">
+                                <!-- Start .panel -->
+        <div class="panel-heading white-bg">
+            <h4 class="panel-title">Web漏扫运行状态</h4>
+            <div class="panel-controls panel-controls-hide" style="display: none;">
+                <a href="#" class="panel-refresh"><i class="im-spinner6"></i></a>
+                <a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a>
+                <a href="#" class="panel-close"><i class="im-close"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: 100%; height: auto;">
+                <div class="table-responsive" style="overflow: hidden; width: 100%; height: auto;">
+                    <table class="table table-bordered table-hover" id="wvs_state_table">
+                        <thead>
+                            <tr>
+                                <th class="per40">漏扫名称</th>
+                                <th class="per40">代理IP地址</th>
+                                <th class="per15">代理端口</th>
+                                <th class="per15">状态时标</th>
+                                <th class="per15">漏扫状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wvs_state_table_body">
+                        {% for wvs_state in wvs_state_list %}
+                                <tr class="active" id="WVS_{{ wvs_state['Name']}}_{{ wvs_state['Address'][0] }}">
+                                    <td>{{wvs_state['Name']}}</td>
+                                    <td>{{wvs_state['Address'][0]}}</td>
+                                    <td>{{wvs_state['Address'][1]}}</td>
+                                    <!--<td>get_time_str({{ wvs_state['Timestamp'] }})</td>-->
+                                    <td >{{wvs_state['Timestamp']}}</td>
+                                    <td>{{wvs_state['State']}}</td>
+                                </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
