@@ -22,7 +22,7 @@ def singleton(cls):
 def init_logger(name):
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s >>> %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(pathname)s [line:%(lineno)d] %(levelname)s >>> %(message)s')
     # 文件日志
     file_handler = logging.FileHandler(
         os.path.join(
@@ -51,36 +51,42 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    WEB_PORT = 5000
-    HOST="127.0.0.1"
+    PORT = 5000
+    HOST = "127.0.0.1"
+    # SERVER_NAME = "{}:{}".format(HOST, PORT)
+
 
     @staticmethod
     def init_app(app):
-        app.debug = DevelopmentConfig.DEBUG
-        app.port = DevelopmentConfig.WEB_PORT
-        app.host = DevelopmentConfig.HOST
+        # app.debug = DevelopmentConfig.DEBUG
+        # app.port = DevelopmentConfig.PORT
+        # app.host = DevelopmentConfig.HOST
 
         init_logger("Server")
-
 
 
 class TestingConfig(BaseConfig):
     TEST = True
-    WEB_PORT = 5000
+    PORT = 5000
+    HOST = "127.0.0.1"
+    # SERVER_NAME = "{}:{}".format(HOST, PORT)
 
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
-    WEB_PORT = 80
-    HOST="0.0.0.0"
+    PORT = 80
+    HOST = "192.168.3.2"
+    # SERVER_NAME = "{}:{}".format(HOST, PORT)
 
     @staticmethod
     def init_app(app):
-        app.debug = DevelopmentConfig.DEBUG
-        app.port = DevelopmentConfig.WEB_PORT
-        app.host = DevelopmentConfig.HOST
+        # app.debug = DevelopmentConfig.DEBUG
+        # app.port = DevelopmentConfig.PORT
+        # app.host = DevelopmentConfig.HOST
 
         init_logger("Server")
+
+
 web_server_config = {
         'development': DevelopmentConfig,
         'testing': TestingConfig,
