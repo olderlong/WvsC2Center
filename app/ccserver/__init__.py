@@ -15,7 +15,7 @@ from app.lib import MessageBus
 logger = logging.getLogger("Server")
 
 
-# @singleton
+@singleton
 class CliApp(object):
     def __init__(self):
         CCServerConfig.load_config()
@@ -35,7 +35,6 @@ class CliApp(object):
             MessageBus.start()
             self.server.start()
             self.agent_state_manager.start_monitor()
-
 
     def stop(self):
         self.__is_running = False
