@@ -34,8 +34,7 @@ def create_app(config_name):
     app.register_blueprint(result_bp, url_prefix='/result')
 
     # 运行CC服务器
-    cli_app = CliApp()
-    cli_app.run()
+    CliApp().run()
 
     import app.result.views as result_view
     from app.lib import MessageBus, CommonMsg
