@@ -5,6 +5,9 @@ import psutil
 import time
 import threading
 import json
+import logging
+
+logger = logging.getLogger("Server")
 
 
 class UDPEndPoint(threading.Thread):
@@ -50,7 +53,7 @@ class UDPEndPoint(threading.Thread):
             udp_socket.bind(self.address)
             return udp_socket
         except Exception as e:
-            print(e)
+            logger.info(e)
             return None
 
     def send_msg_to(self, str_msg, address):

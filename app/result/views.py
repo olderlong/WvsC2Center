@@ -1,7 +1,10 @@
-import time, logging
-from flask import render_template, redirect, url_for,flash
+import time
+import logging
+import os
+from flask import render_template, redirect, url_for,flash, send_file
 
 from . import result
+from .gen_report_file import GenReport
 from app.scan_session import *
 
 logger = logging.getLogger("Server")
@@ -12,9 +15,12 @@ def index():
     return render_template("result.html", title="扫描结果", scan_result_list=ScanResult().wvs_result_list)
 
 
-@result.route("/report/<time>",methods=['GET', 'POST'])
-def report(time):
-    pass
+@result.route("/report/<timestramp>",methods=['GET', 'POST'])
+def report(timestramp):
+    gen_report = GenReport()
+    gen_report.gen_report()
+    return send_file(os.path.join(gen_report.report_path, gen_report.report_file_name), as_attachment=True)
+    # return send_from_directory(gen_report.report_path, gen_report.report_file_name, as_attachment=True)
 
 
 @result.route("/save", methods=['GET', 'POST'])

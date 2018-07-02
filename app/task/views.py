@@ -73,7 +73,8 @@ def delete(task_name):
 @task.route("/result_info/<task_name>",methods=['GET', 'POST'])
 def result_info(task_name):
     if task_name:
-        _, _, result_list = ScanTaskManager().load_task_info(task_name)
+        _, scan_config, result_list = ScanTaskManager().load_task_info(task_name)
+        WvssState().set_current_scan_config(scan_config)
         log.info(result_list)
         return redirect(url_for("result.index"))
 

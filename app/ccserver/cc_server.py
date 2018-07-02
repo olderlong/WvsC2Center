@@ -11,11 +11,12 @@ logger = logging.getLogger("Server")
 class CCServer(UDPEndPoint):
     def __init__(self, ip=None, port=6000):
         self.server_ip = ip
+        self.port = port
         self.agent_list = []
         self.agent_state_monitor = AgentStateMonitor()
 
         MessageBus.add_msg_listener(CommonMsg.MSG_SERVER_COMMAND, self.send_command)
-        super(CCServer, self).__init__(ip=self.server_ip, port=port, handler=self.receive_data_handler)
+        super(CCServer, self).__init__(ip=self.server_ip, port=self.port, handler=self.receive_data_handler)
 
     def receive_data_handler(self, data, address):
         if address not in self.agent_list:

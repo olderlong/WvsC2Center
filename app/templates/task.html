@@ -104,24 +104,20 @@
                                     <td>{{ task_info["Timestamp"] }}</td>
                                     <td><a href="{{url_for('task.result_info', task_name=task_info['TaskName'])}}">结果信息</a></td>
                                     <td>
-                                    {% if run_task_name == "" %}
+                                    {% if scan_state == "Stopped" %}
                                              <a href="{{url_for('task.delete', task_name=task_info['TaskName'])}}" >删除</a>&nbsp;
                                              <a href="{{url_for('task.start_scan', task_name=task_info['TaskName'])}}">开始扫描</a>&nbsp;
                                             <span>停止扫描</span>
-                                    {% elif run_task_name ==  task_info["TaskName"] %}
-                                        {% if scan_state == "Stopped" %}
-                                             <a href="{{url_for('task.delete', task_name=task_info['TaskName'])}}" >删除</a>&nbsp;
-                                             <a href="{{url_for('task.start_scan', task_name=task_info['TaskName'])}}">开始扫描</a>&nbsp;
+                                    {% elif scan_state ==  "Started" %}
+                                        {% if run_task_name != task_info["TaskName"] %}
+                                            <span>删除</span>&nbsp;
+                                            <span>开始扫描</span>&nbsp;
                                             <span>停止扫描</span>
-                                        {% elif scan_state == "Started" %}
+                                        {% elif run_task_name == task_info["TaskName"] %}
                                             <span>删除</span>&nbsp;
                                              <span >开始扫描</span>&nbsp;
                                              <a href="{{url_for('task.stop_scan')}}">停止扫描</a>
                                         {% endif %}
-                                    {% elif run_task_name != task_info["TaskName"] %}
-                                           <a href="{{url_for('task.delete', task_name=task_info['TaskName'])}}" >删除</a>&nbsp;
-                                             <a href="{{url_for('task.start_scan', task_name=task_info['TaskName'])}}">开始扫描</a>&nbsp;
-                                            <span>停止扫描</span>
                                     {% endif %}
                                     </td>
                                 {% endfor %}

@@ -51,12 +51,14 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    WEB_PORT = 5555
+    WEB_PORT = 5000
+    HOST="127.0.0.1"
 
     @staticmethod
     def init_app(app):
         app.debug = DevelopmentConfig.DEBUG
         app.port = DevelopmentConfig.WEB_PORT
+        app.host = DevelopmentConfig.HOST
 
         init_logger("Server")
 
@@ -70,8 +72,15 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     DEBUG = False
     WEB_PORT = 80
+    HOST="0.0.0.0"
 
+    @staticmethod
+    def init_app(app):
+        app.debug = DevelopmentConfig.DEBUG
+        app.port = DevelopmentConfig.WEB_PORT
+        app.host = DevelopmentConfig.HOST
 
+        init_logger("Server")
 web_server_config = {
         'development': DevelopmentConfig,
         'testing': TestingConfig,

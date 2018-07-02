@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="./css/site.css" />
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.css" />
+    <script src="./js/jquery-3.3.1.js"></script>
+    <script src="./js/modernizr-2.6.2.js"></script>
+</head>
+<body>
+<div class="container body-content" width="80%">
+<div class="row">
+    <div class="col-lg-12">
+        <h1>{{ scan_config[0] }}扫描结果 </h1>
+    </div>
+    <div class="col-lg-12">
+        <!-- col-lg-6 start here -->
+        <div class="panel panel-info toggle panelRefresh" id="spr_6">
+            <!-- Start .panel -->
+            <div class="panel-heading">
+                <h4 class="panel-title">扫描参数</h4>
+                <div class="panel-controls panel-controls-hide" style="display: none;"><a href="#" class="panel-refresh"><i class="im-spinner6"></i></a><a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a></div></div>
+            <div class="panel-body"  style="margin: 0px; padding: 0px;">
+                <form action="#" class="form-horizontal" >
+                    <div class="form-group" style="margin: 0px; padding: 0px;" >
+                        <label class="col-lg-3 control-label" >任务名称</label>
+                        <div class="col-lg-9">
+                            <label class="control-label">{{scan_config[0]}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0px; padding: 0px;" >
+                        <label class="col-lg-3 control-label" >扫描起始URL</label>
+                        <div class="col-lg-9">
+                            <label class="control-label">{{scan_config[1]}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0px; padding: 0px;">
+                        <label class="col-lg-3 control-label">扫描策略</label>
+                        <div class="col-lg-9">
+                            <label class="control-label">{{scan_config[2]}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0px; padding: 0px;">
+                        <label class="col-lg-3 control-label">&nbsp;</label>
+                        <div class="col-lg-9">
+                            <label class="control-label">&nbsp;</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 ">
+    <div class="panel panel-primary plain toggle panelClose panelRefresh" id="spr_1"  style="margin: 0px; padding: 0px;">
+                                <!-- Start .panel -->
+        <div class="panel-heading white-bg">
+            <h4 class="panel-title">扫描结果</h4>
+            <div class="panel-controls panel-controls-hide" style="display: none;">
+                <a href="#" class="panel-refresh"><i class="im-spinner6"></i></a>
+                <a href="#" class="toggle panel-minimize"><i class="im-minus"></i></a>
+                <a href="#" class="panel-close"><i class="im-close"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: 100%; height: auto;">
+                <div class="table-responsive" style="overflow: hidden; width: 100%; height: auto;">
+                    <table class="table table-bordered table-hover" id="wvs_result_table" >
+                        <thead>
+                            <tr>
+                                <th  width="5%">#</th>
+                                <th class="per40" width="10%">漏洞类型</th>
+                                <th class="per15"  width="10%">漏洞URL</th>
+                                <th class="per15"  width="5%">漏洞级别</th>
+                                <th class="per15" width="70%">漏洞信息</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wvs_result_table_body">
+                        {% for res in scan_result_list %}
+                                <tr class="active" id='Result_{{ res["VulType"] }}_{{res["VulUrl"]}}'>
+                                    <td>{{loop.index}}</td>
+                                    <td>{{res["VulUrl"]}}</td>
+                                    <td>{{res["VulType"]}}</td>
+                                    <td>{{res["VulSeverity"]}}</td>
+                                    <td>
+                                    <table class="table table-condensed table-hover" id="vul_detail_{{loop.index}}" style="word-break:break-all; word-wrap:break-spaces;">
+                                        <thead>
+                                            <tr>
+                                                <th class="per40" width="40%">参数变异</th>
+                                                <th class="per15" width="40%">漏洞原因</th>
+                                                <th class="per15">CWE</th>
+                                                <th class="per15">CVE</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for vul_detail in res["VulDetails"] %}
+                                            <tr class="info">
+                                                <td>{{vul_detail["url_param_variant"]}}</td>
+                                                <td>{{vul_detail["vul_reasoning"]}}</td>
+                                                <td>{{vul_detail["CWE"]}}</td>
+                                                <td>{{vul_detail["CVE"]}}</td>
+                                            </tr>
+                                         {% endfor %}
+                                        </tbody>
+                                    </table>
+                                        </td>
+
+                                </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+</html>
