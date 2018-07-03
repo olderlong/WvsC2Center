@@ -25,6 +25,8 @@ def index():
             task_info_list, _ = ScanTaskManager().load_all_task_info()
             # log.info("Task list is {}".format(task_info_list))
 
+            # WvssState().set_current_scan_config(ScanSetting().get_scan_setting())
+
             if request.form.get("submit_new_and_start") == u"新建任务并运行":
                 setting = ScanSetting()
                 WvssState().set_current_scan_config(ScanSetting().get_scan_setting())
