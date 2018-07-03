@@ -36,7 +36,7 @@ class ScanTaskManager(object):
             task_info_json = json.load(rf)
             task_info = TaskInfo(task_info_json)
             # 初始化扫描参数和结果信息
-            ScanSetting(task_name, task_info.start_url, task_info.scan_policy)
+            ScanSetting().set_scan_setting(task_name, task_info.start_url, task_info.scan_policy)
             self.load_task_result(os.path.join(task_path, "scan_result.json"))
             return task_info, ScanSetting().get_scan_setting(), ScanResult().wvs_result_list
 
@@ -67,6 +67,7 @@ class ScanTaskManager(object):
         task_info = TaskInfo()
         # 保存任务信息
         with open(os.path.join(task_path, "task_info.json"), 'w', encoding='utf-8') as wf:
+            log.info("save task info ::  {}".format(ScanSetting().get_scan_setting()))
             _, task_info.start_url, task_info.scan_policy = ScanSetting().get_scan_setting()
             task_info_json = task_info.get_task_info_dict()
             json.dump(task_info_json, wf)
@@ -97,7 +98,7 @@ class ScanTaskManager(object):
             self.scan_task_list.remove(task)
 
             self.__save_task_list()
-            ScanSetting().set_scan_setting("","Normal","")
+            ScanSetting().set_scan_setting("", "", "Normal")
             ScanResult().clear_result_list()
         else:
             log.info("任务<{}>不存在".format(task_name))
