@@ -116,7 +116,7 @@
                                         {% elif run_task_name == task_info["TaskName"] %}
                                             <span>删除</span>&nbsp;
                                              <span >开始扫描</span>&nbsp;
-                                             <a href="{{url_for('task.stop_scan')}}">停止扫描</a>
+                                             <a href="{{url_for('task.stop_scan', task_name=task_info['TaskName'])}}">停止扫描</a>
                                         {% endif %}
                                     {% endif %}
                                     </td>
