@@ -1,5 +1,6 @@
 import logging
 from flask import render_template, redirect, url_for, request
+from flask_socketio import emit
 
 from . import monitor
 from .forms import ScanControlForm
@@ -72,7 +73,7 @@ def index():
 
 @GlobalVar.SocketIO.on("connect", namespace="/agent_state_ns")
 def ws_agent_state_connect():
-    MessageBus.add_msg_listener(CommonMsg.MSG_AGENT_STATE_UPDATE, ws_agent_state_send)
+    # MessageBus.add_msg_listener(CommonMsg.MSG_AGENT_STATE_UPDATE, ws_agent_state_send)
     logger.info("Agent state websocket is connected")
 
 
@@ -80,6 +81,7 @@ def ws_agent_state_send(msg):
     agent_state = msg.data
     AgentsState().add_agent_state(agent_state)
     GlobalVar.SocketIO.emit(
+    # emit(
         "agent_state_update",
         agent_state,
         namespace="/agent_state_ns"
@@ -89,7 +91,7 @@ def ws_agent_state_send(msg):
 
 @GlobalVar.SocketIO.on("connect", namespace="/wvs_state_ns")
 def ws_wvs_state_connect():
-    MessageBus.add_msg_listener(CommonMsg.MSG_WVS_STATE, ws_wvs_state_send)
+    # MessageBus.add_msg_listener(CommonMsg.MSG_WVS_STATE, ws_wvs_state_send)
     logger.info("Wvs state websocket is connected")
 
 
