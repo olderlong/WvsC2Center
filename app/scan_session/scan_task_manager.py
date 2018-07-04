@@ -105,7 +105,10 @@ class ScanTaskManager(object):
 
     def get_last_task(self):
         # 返回最近一次任务（名称，time）
-        return self.scan_task_list[::-1][0]
+        if len(self.scan_task_list) > 0:
+            return self.scan_task_list[::-1][0]
+        else:
+            return None
 
     def __find_task(self, task_name):
         for task in self.scan_task_list:
