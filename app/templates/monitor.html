@@ -7,8 +7,15 @@
 <script>
     function start_agent_state_update(){
         namespace = "/agent_state_ns";
-        var socket = io.connect(location.protocol+"//"+document.domain + ":" + location.port + namespace);
-        console.log(location.protocol+"//"+document.domain + ":" + location.port + namespace);
+        var port = 0
+        if (location.port){
+            port = location.port
+        }else{
+            port = 80
+        }
+        var socket = io.connect(location.protocol+"//"+document.domain + ":" + port + namespace);
+        console.log(location.protocol+"//"+document.domain + ":" + port + namespace);
+
         socket.on("agent_state_update", function(agent_state_json){
             console.log(agent_state_json);
             update_agent_state(agent_state_json)
@@ -16,8 +23,15 @@
     }
     function start_wvs_state_update(){
         namespace = "/wvs_state_ns";
-        var socket = io.connect(location.protocol+"//"+document.domain + ":" + location.port + namespace);
-        console.log(location.protocol+"//"+document.domain + ":" + location.port + namespace);
+        var port = 0
+        if (location.port){
+            port = location.port
+        }else{
+            port = 80
+        }
+        var socket = io.connect(location.protocol+"//"+document.domain + ":" + port + namespace);
+        console.log(location.protocol+"//"+document.domain + ":" + port + namespace);
+
         socket.on("wvs_state_update", function(wvs_state_json){
             console.log(wvs_state_json);
             update_wvs_state(wvs_state_json)

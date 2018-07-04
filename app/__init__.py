@@ -36,9 +36,13 @@ def create_app(config_name):
     # 运行CC服务器
     CliApp().run()
 
-    import app.result.views as result_view
     from app.lib import MessageBus, CommonMsg
+    import app.result.views as result_view
     MessageBus.add_msg_listener(CommonMsg.MSG_SCAN_RESULT_RECEIVE, result_view.scan_result_handler)
+    import app.monitor.views as monitor_view
+    MessageBus.add_msg_listener(CommonMsg.MSG_WVS_STATE, monitor_view.ws_wvs_state_send)
+    MessageBus.add_msg_listener(CommonMsg.MSG_AGENT_STATE_UPDATE, monitor_view.ws_agent_state_send)
+
 
     return app
 

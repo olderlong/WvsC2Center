@@ -76,6 +76,7 @@ class ProductionConfig(BaseConfig):
     DEBUG = False
     PORT = 80
     HOST = "192.168.3.2"
+    HOST = "192.168.1.31"
     # SERVER_NAME = "{}:{}".format(HOST, PORT)
 
     @staticmethod
