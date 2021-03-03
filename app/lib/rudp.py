@@ -29,13 +29,13 @@ logger = init_logger("RUDP")
 
 
 class RUDP(object):
-    """[summary]
+    """UDP类
 
     Args:
         object ([type]): [description]
     """
     def __init__(self, ip="127.0.0.1", port=4444, callback=None):
-        """[summary]
+        """初始化
 
         Args:
             ip (str, optional): [description]. Defaults to "127.0.0.1".
@@ -76,7 +76,7 @@ class RUDP(object):
         self.__running.clear()
 
     def __send_data_to(self, data, datatype, address):
-        """[summary]
+        """发送二进制数据
 
         Args:
             data ([type]): [description]
@@ -92,31 +92,31 @@ class RUDP(object):
         pass
 
     def send_msg_to(self, str_msg, datatype, address):
-        """[summary]
+        """发送msg信息
 
         Args:
-            str_msg ([type]): [description]
-            datatype ([type]): [description]
-            address ([type]): [description]
+            str_msg ([type]): 待发送的字符串
+            datatype ([type]): 数据类型
+            address ([type]): 目的地址
         """
         self.__send_data_to(bytes(str_msg, "utf-8"), datatype, address)
 
     def send_obj_to(self, json_obj, datatype, address):
-        """[summary]
+        """发送json对象
 
         Args:
-            json_obj ([type]): [description]
-            datatype ([type]): [description]
-            address ([type]): [description]
+            json_obj ([type]): 待发送的json对象
+            datatype ([type]): 数据类型
+            address ([type]): 目的地址
         """
         json_str = json.dumps(json_obj)
         self.__send_data_to(bytes(json_str, "utf-8"), datatype, address)
 
     def __init_socket(self):
-        """[summary]
+        """socket初始化函数
 
         Returns:
-            [type]: [description]
+            [type]: socket
         """
         try:
             self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -128,7 +128,7 @@ class RUDP(object):
             return False
 
     def __recvieve(self):
-        """[summary]
+        """接收函数
         """
         while self.__running:
             logger.info("In recieve thread")
@@ -182,14 +182,14 @@ class RUDP(object):
             time.sleep(5)
 
     def __pack_data(self, data, data_type="Data"):
-        """[summary]
+        """数据打包
 
         Args:
-            data ([type]): [description]
-            data_type (str, optional): [description]. Defaults to "Data".
+            data ([type]): 打包的数据
+            data_type (str, optional): 数据类型. Defaults to "Data".
 
         Returns:
-            [type]: [description]
+            [type]: 打包后的数据
         """
         send_data_signature, send_time = self.__gen_data_signature(data)
         send_data = {
@@ -201,26 +201,26 @@ class RUDP(object):
         return send_data
 
     def __unpack_data(self, data):
-        """[summary]
+        """解包数据 
 
         Args:
-            data ([type]): [description]
+            data ([type]): 接收数据
 
         Returns:
-            [type]: [description]
+            [type]: 解包后数据
         """
         recv_data = json.loads(data)
         return recv_data["Type"], recv_data["Data"], recv_data[
             "Signature"], recv_data["Timestramp"]
 
     def __gen_data_signature(self, data):
-        """[summary]
+        """生成数据签名
 
         Args:
-            data ([type]): [description]
+            data ([type]): 数据信息
 
         Returns:
-            [type]: [description]
+            [type]: 前面信息
         """
         send_time = time.time()
         data_in_bytes = data + bytes("{}".format(send_time), 'utf-8')

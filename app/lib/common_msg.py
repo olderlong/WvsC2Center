@@ -4,7 +4,7 @@ from .message_bus import Message
 
 
 class CommonMsg(object):
-    """[summary]
+    """通用消息类
 
     Args:
         object ([type]): [description]

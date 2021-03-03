@@ -91,7 +91,7 @@ class UDPEndPoint(threading.Thread):
             self.udp_socket.sendto(bytes(str_msg, 'utf-8'), address)
 
     def send_json_to(self, json_obj, address):
-        """[summary]
+        """发送json对象
 
         Args:
             json_obj ([type]): [description]

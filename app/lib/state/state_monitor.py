@@ -7,6 +7,11 @@ import copy
 
 
 class StateMonitor(object):
+    """状态监视类
+
+    Args:
+        object ([type]): [description]
+    """
     def __init__(self, name=None):
         if name:
             self.name = name
@@ -15,7 +20,8 @@ class StateMonitor(object):
 
         self.expire_time = 30.0
         self.__running = threading.Event()
-        self.__state_monitor_thread = threading.Thread(target=self.__state_monitor)
+        self.__state_monitor_thread = threading.Thread(
+            target=self.__state_monitor)
 
         self.all_state_dict = {}
 
@@ -26,7 +32,8 @@ class StateMonitor(object):
                     if time.time() - state.timestamp > self.expire_time:
                         state.update_state("offline")
                         self.all_state_dict[state.identifier] = state
-                        print("{} is offline :: {}".format(state.identifier, state))
+                        print("{} is offline :: {}".format(
+                            state.identifier, state))
                 time.sleep(1)
 
     def start_monitor(self, expire_time=30.0):
@@ -64,4 +71,3 @@ class StateMonitor(object):
                 state_list_str = state_list_str + "{}\n".format(state)
 
         return state_list_str
-
