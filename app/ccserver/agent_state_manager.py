@@ -10,7 +10,6 @@ from config import singleton
 from .cc_server_config import CCServerConfig
 from .agent_state import AgentState
 
-
 logger = logging.getLogger("Server")
 
 
@@ -22,10 +21,17 @@ class AgentStateMonitor(object):
     def __init__(self):
         self.agent_state_dict = dict()
         self.__running = threading.Event()
-        self.__state_monitor_thread = threading.Thread(target=self.__agents_state_monitor)
-        MessageBus.add_msg_listener(CommonMsg.MSG_HEARTBEAT, self.add_new_agent_state)
+        self.__state_monitor_thread = threading.Thread(
+            target=self.__agents_state_monitor)
+        MessageBus.add_msg_listener(CommonMsg.MSG_HEARTBEAT,
+                                    self.add_new_agent_state)
 
     def add_new_agent_state(self, msg):
+        """添加新的代理状态
+
+        Args:
+            msg (Message): [description]
+        """
         state_data = msg.data
         agent_state = AgentState()
         agent_state.gen_from_json_obj(state_data)
@@ -34,6 +40,11 @@ class AgentStateMonitor(object):
         self.agent_state_dict[agent_state.agent_identifier] = agent_state
 
     def update_agent_state(self, agent_state):
+        """更新代理状态
+
+        Args:
+            agent_state ([type]): 代理状态
+        """
         self.agent_state_dict[agent_state.agent_identifier] = agent_state
         agent_state.print_state()
 
@@ -56,20 +67,24 @@ class AgentStateMonitor(object):
                 for agent_state in list(self.agent_state_dict.values()):
                     new_state = self.__check_state(agent_state)
                     if new_state == "Dead":
-                        logger.info("Agent {0} is dead.\nAgent {1} is removed.".format(
-                            agent_state.agent_identifier,
-                            agent_state.agent_identifier))
+                        logger.info(
+                            "Agent {0} is dead.\nAgent {1} is removed.".format(
+                                agent_state.agent_identifier,
+                                agent_state.agent_identifier))
 
                         agent_state.state = new_state
-                        CommonMsg.msg_agent_state_update.data = agent_state.gen_json_object()
+                        CommonMsg.msg_agent_state_update.data = agent_state.gen_json_object(
+                        )
                         MessageBus.send_msg(CommonMsg.msg_agent_state_update)
 
                         self.agent_state_dict.pop(agent_state.agent_identifier)
                     else:
                         agent_state.state = new_state
-                        self.agent_state_dict[agent_state.agent_identifier] = agent_state
+                        self.agent_state_dict[
+                            agent_state.agent_identifier] = agent_state
 
-                        CommonMsg.msg_agent_state_update.data = agent_state.gen_json_object()
+                        CommonMsg.msg_agent_state_update.data = agent_state.gen_json_object(
+                        )
                         MessageBus.send_msg(CommonMsg.msg_agent_state_update)
 
                         time.sleep(1)
@@ -98,11 +113,10 @@ if __name__ == '__main__':
     monitor.start_monitor()
 
     CommonMsg.msg_heartbeat.data = {
-            "Name":"tste",
-            "Address": ("127.0.0.1", 5555),
-            "Timestamp": time.time(),
-            "State": "Online"
-        }
+        "Name": "tste",
+        "Address": ("127.0.0.1", 5555),
+        "Timestamp": time.time(),
+        "State": "Online"
+    }
     MessageBus().send_msg(CommonMsg.msg_heartbeat)
     time.sleep(20)
-

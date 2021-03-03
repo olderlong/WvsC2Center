@@ -11,12 +11,16 @@ from .cc_server_config import CCServerConfig
 
 from app.lib import MessageBus
 
-
 logger = logging.getLogger("Server")
 
 
 @singleton
 class CliApp(object):
+    """命令行模式启动应用
+
+    Args:
+        object ([type]): [description]
+    """
     def __init__(self):
         CCServerConfig.load_config()
         self.__is_running = False
@@ -30,7 +34,8 @@ class CliApp(object):
             pass
         else:
             self.__is_running = True
-            logger.info("CCServer is running <{}>...".format(CCServerConfig.Address))
+            logger.info("CCServer is running <{}>...".format(
+                CCServerConfig.Address))
 
             MessageBus.start()
             self.server.start()
@@ -47,4 +52,6 @@ class CliApp(object):
         return self.__is_running
 
 
-__all__ = ["CCServerConfig", "CCServer", "AgentStateMonitor", "AgentState", "CliApp"]
+__all__ = [
+    "CCServerConfig", "CCServer", "AgentStateMonitor", "AgentState", "CliApp"
+]

@@ -9,17 +9,17 @@ logger = logging.getLogger("Server")
 
 
 class CCServer(UDPEndPoint):
-    """[summary]
+    """控制服务器类
 
     Args:
-        UDPEndPoint ([type]): [description]
+        UDPEndPoint ([type]): 控制服务器类的基类，为UDP终端类
     """
     def __init__(self, ip=None, port=6000):
-        """[summary]
+        """类的初始化
 
         Args:
-            ip ([type], optional): [description]. Defaults to None.
-            port (int, optional): [description]. Defaults to 6000.
+            ip (str, optional): 服务器IP. Defaults to None.
+            port (int, optional): 服务器端口. Defaults to 6000.
         """
         self.server_ip = ip
         self.port = port
@@ -33,11 +33,11 @@ class CCServer(UDPEndPoint):
                                        handler=self.receive_data_handler)
 
     def receive_data_handler(self, data, address):
-        """[summary]
+        """接收数据处理函数
 
         Args:
-            data ([type]): [description]
-            address ([type]): [description]
+            data ([type]): 接收的数据
+            address ([type]): 接收数据的IP地址
         """
         if address not in self.agent_list:
             self.agent_list.append(address)
@@ -67,10 +67,10 @@ class CCServer(UDPEndPoint):
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def __print_scan_result(self, vul_result):
-        """[summary]
+        """打印扫描结果
 
         Args:
-            vul_result ([type]): [description]
+            vul_result ([type]): 漏洞结果
         """
         result_str = "漏洞类型:\t{}\n漏洞URL:\t{}\n漏洞等级:\t{}\n漏洞信息:\t".format(
             vul_result["VulType"], vul_result["VulUrl"],
@@ -87,10 +87,10 @@ class CCServer(UDPEndPoint):
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def send_command(self, msg):
-        """[summary]
+        """发送命令
 
         Args:
-            msg ([type]): [description]
+            msg (dict): 命令信息，为dict对象
         """
         command_json = msg.data
         logger.info("in CCServer " + str(command_json))
@@ -102,10 +102,10 @@ class CCServer(UDPEndPoint):
                 self.send_json_to(command_json, address)
 
     def send_config(self, msg):
-        """[summary]
+        """发送配置信息
 
         Args:
-            msg ([type]): [description]
+            msg ([type]): 配置信息
         """
         config_json = msg.data
         for address in self.agent_list:
