@@ -1,0 +1,15 @@
+app/main/__pycache__/*.pyc
+app/lib/__pycache__/*.pyc
+app/ccserver/__pycache__/*.pyc
+app/monitor/__pycache__/*.pyc
+app/result/__pycache__/*.pyc
+app/scan_session/__pycache__/*.pyc
+app/task/__pycache__/*.pyc
+app/__pycache__/*.pyc
+app/static/*
+log/*
+report_file/*
+scan_task/*
+__pycache__/*.pyc
+venv/*
+.idea/*

@@ -110,21 +110,24 @@ class MessageBus(object):
 
 class Message(object):
     def __init__(self, priority=1, subject=None, data={}):
-        self.priority = priority    # 消息优先级
-        self.subject = subject      # 消息类型
-        self.data = data            # 消息数据，字典类型
+        self.priority = priority  # 消息优先级
+        self.subject = subject  # 消息类型
+        self.data = data  # 消息数据，字典类型
 
-    def __lt__(self, other):    # operator <
+    def __lt__(self, other):  # operator <
         # return self.priority < other.priority   # 小的在前
-        return self.priority > other.priority   # 大的在前
+        return self.priority > other.priority  # 大的在前
 
     def __str__(self):
-        return '(' + str(self.priority)+', \'' + self.subject + '\', ' + str(self.data)+')'
+        return '(' + str(self.priority) + ', \'' + self.subject + '\', ' + str(
+            self.data) + ')'
 
 
 if __name__ == '__main__':
+
     def fn(msg):
-        print("Time: {}\t\tThread ID: {}\t\t Data: {}".format(time.time(), threading.get_ident(), str(msg)))
+        print("Time: {}\t\tThread ID: {}\t\t Data: {}".format(
+            time.time(), threading.get_ident(), str(msg)))
         # time.sleep(1)
 
     MessageBus.add_msg_listener("C", fn)

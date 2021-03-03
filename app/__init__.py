@@ -8,6 +8,14 @@ from app.scan_session import GlobalVar
 
 
 def create_app(config_name):
+    """创建web程序
+
+    Args:
+        config_name (对象)): 配置名称
+
+    Returns:
+        [type]: [description]
+    """
     app = Flask(__name__)
     app.config.from_object(web_server_config[config_name])
     web_server_config[config_name].init_app(app)
@@ -38,11 +46,12 @@ def create_app(config_name):
 
     from app.lib import MessageBus, CommonMsg
     import app.result.views as result_view
-    MessageBus.add_msg_listener(CommonMsg.MSG_SCAN_RESULT_RECEIVE, result_view.scan_result_handler)
+    MessageBus.add_msg_listener(CommonMsg.MSG_SCAN_RESULT_RECEIVE,
+                                result_view.scan_result_handler)
     import app.monitor.views as monitor_view
-    MessageBus.add_msg_listener(CommonMsg.MSG_WVS_STATE, monitor_view.ws_wvs_state_send)
-    MessageBus.add_msg_listener(CommonMsg.MSG_AGENT_STATE_UPDATE, monitor_view.ws_agent_state_send)
-
+    MessageBus.add_msg_listener(CommonMsg.MSG_WVS_STATE,
+                                monitor_view.ws_wvs_state_send)
+    MessageBus.add_msg_listener(CommonMsg.MSG_AGENT_STATE_UPDATE,
+                                monitor_view.ws_agent_state_send)
 
     return app
-

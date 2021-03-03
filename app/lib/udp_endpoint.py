@@ -11,7 +11,20 @@ logger = logging.getLogger("Server")
 
 
 class UDPEndPoint(threading.Thread):
+    """
+    UDP 通信端
+
+    Args:
+        threading ([type]): [description]
+    """
     def __init__(self, ip=None, port=6000, handler=None):
+        """初始化
+
+        Args:
+            ip (str, optional): UDP通信IP. Defaults to None.
+            port (int, optional): 端口. Defaults to 6000.
+            handler ([type], optional): 消息处理回调函数. Defaults to None.
+        """
         self.buff_size = 4096
         self.handler = handler
         self.ip = ip
@@ -31,10 +44,13 @@ class UDPEndPoint(threading.Thread):
 
     def run(self):
         # print("udp server is listen at {}".format(self.address))
-        while self.__running and self.udp_socket.fileno()>0:
+        while self.__running and self.udp_socket.fileno() > 0:
             try:
                 data, address = self.udp_socket.recvfrom(self.buff_size)
-                threading.Thread(target=self.handler, args=(data, address,)).start()
+                threading.Thread(target=self.handler, args=(
+                    data,
+                    address,
+                )).start()
             except Exception as e:
                 # print(e)
                 pass
@@ -44,6 +60,14 @@ class UDPEndPoint(threading.Thread):
         self.__running.clear()
 
     def init_socket(self, port):
+        """初始化socket
+
+        Args:
+            port ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """
         try:
             if self.ip is None:
                 self.ip = self.get_host_ip()
@@ -57,10 +81,22 @@ class UDPEndPoint(threading.Thread):
             return None
 
     def send_msg_to(self, str_msg, address):
+        """[summary]
+
+        Args:
+            str_msg ([str]): [消息]
+            address ([str]): [接收端地址]
+        """
         if self.udp_socket.fileno() > 0:
             self.udp_socket.sendto(bytes(str_msg, 'utf-8'), address)
 
     def send_json_to(self, json_obj, address):
+        """[summary]
+
+        Args:
+            json_obj ([type]): [description]
+            address ([type]): [description]
+        """
         json_str = json.dumps(json_obj)
         if self.udp_socket.fileno() > 0:
             self.udp_socket.sendto(bytes(json_str, 'utf-8'), address)
@@ -95,13 +131,13 @@ if __name__ == '__main__':
     udp_client.start()
 
     for index in range(5):
-        udp_client.send_msg_to("Hello world# {} ".format(index), udp_server.address)
+        udp_client.send_msg_to("Hello world# {} ".format(index),
+                               udp_server.address)
         time.sleep(0.5)
-        udp_server.send_msg_to("Hello world# {} ".format(index), udp_client.address)
+        udp_server.send_msg_to("Hello world# {} ".format(index),
+                               udp_client.address)
         time.sleep(1)
 
     udp_server.stop()
     udp_client.stop()
     # udp_server.join()
-
-

@@ -1,7 +1,7 @@
 import time
 import logging
 import os
-from flask import render_template, redirect, url_for,flash, send_file
+from flask import render_template, redirect, url_for, flash, send_file
 
 from . import result
 from .gen_report_file import GenReport
@@ -12,14 +12,18 @@ logger = logging.getLogger("Server")
 
 @result.route("/", methods=['GET', 'POST'])
 def index():
-    return render_template("result.html", title="扫描结果", scan_result_list=ScanResult().wvs_result_list)
+    return render_template("result.html",
+                           title="扫描结果",
+                           scan_result_list=ScanResult().wvs_result_list)
 
 
-@result.route("/report/<timestramp>",methods=['GET', 'POST'])
+@result.route("/report/<timestramp>", methods=['GET', 'POST'])
 def report(timestramp):
     gen_report = GenReport()
     gen_report.gen_report()
-    return send_file(os.path.join(gen_report.report_path, gen_report.report_file_name), as_attachment=True)
+    return send_file(os.path.join(gen_report.report_path,
+                                  gen_report.report_file_name),
+                     as_attachment=True)
     # return send_from_directory(gen_report.report_path, gen_report.report_file_name, as_attachment=True)
 
 
@@ -32,7 +36,9 @@ def save():
 
     logger.info("任务列表：{}".format(ScanTaskManager().scan_task_list))
 
-    return render_template("result.html", title="扫描结果", scan_result_list=ScanResult().wvs_result_list)
+    return render_template("result.html",
+                           title="扫描结果",
+                           scan_result_list=ScanResult().wvs_result_list)
 
 
 def scan_result_handler(msg):
@@ -41,11 +47,9 @@ def scan_result_handler(msg):
     existed = ScanResult().has(scan_res)
     if not existed:
         logger.info("Recive result data:\t{}".format(scan_res))
-    GlobalVar.SocketIO.emit(
-            "wvs_result_update",
-            scan_res,
-            namespace="/wvs_result"
-        )
+    GlobalVar.SocketIO.emit("wvs_result_update",
+                            scan_res,
+                            namespace="/wvs_result")
     logger.info("Send agent state: {}".format(scan_res))
 
 

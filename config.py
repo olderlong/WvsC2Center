@@ -22,12 +22,13 @@ def singleton(cls):
 def init_logger(name):
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s %(pathname)s [line:%(lineno)d] %(levelname)s >>> %(message)s')
+    formatter = logging.Formatter(
+        '%(asctime)s %(pathname)s [line:%(lineno)d] %(levelname)s >>> %(message)s'
+    )
     # 文件日志
     file_handler = logging.FileHandler(
         os.path.join(
-            basedir,
-            "log/{}.log".format(
+            basedir, "log/{}.log".format(
                 time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime(time.time())))))
     file_handler.setFormatter(formatter)  # 可以通过setFormatter指定输出格式
 
@@ -41,7 +42,8 @@ def init_logger(name):
 
 
 class BaseConfig(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or "pBw%E7feV!!tJZuP3f&QPz2%ola*2IyE"
+    SECRET_KEY = os.environ.get(
+        'SECRET_KEY') or "pBw%E7feV!!tJZuP3f&QPz2%ola*2IyE"
     SCAN_TASK_PATH = os.path.join(basedir, "scan_task")
 
     @staticmethod
@@ -53,8 +55,6 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     PORT = 5000
     HOST = "127.0.0.1"
-    # SERVER_NAME = "{}:{}".format(HOST, PORT)
-
 
     @staticmethod
     def init_app(app):
@@ -75,22 +75,25 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     DEBUG = False
     PORT = 80
-    HOST = "192.168.3.2"
-    HOST = "192.168.1.31"
+    # HOST = "192.168.3.2"
+    HOST = "192.168.43.137"
     # SERVER_NAME = "{}:{}".format(HOST, PORT)
 
     @staticmethod
     def init_app(app):
-        # app.debug = DevelopmentConfig.DEBUG
-        # app.port = DevelopmentConfig.PORT
-        # app.host = DevelopmentConfig.HOST
+        app.debug = ProductionConfig.DEBUG
+        app.port = ProductionConfig.PORT
+        app.host = ProductionConfig.HOST
 
         init_logger("Server")
+        logger = logging.getLogger("Server")
+        logger.info("Web Server is running <{}:{}>...".format(
+            ProductionConfig.HOST, ProductionConfig.PORT))
 
 
 web_server_config = {
-        'development': DevelopmentConfig,
-        'testing': TestingConfig,
-        'production': ProductionConfig,
-        'default': DevelopmentConfig
-    }
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'production': ProductionConfig,
+    'default': DevelopmentConfig
+}
