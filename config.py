@@ -9,6 +9,11 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 def singleton(cls):
+    """单例模式修饰器
+
+    Returns:
+        object : 单例对象
+    """
     _instance = {}
 
     def _singleton(*args, **kargs):
@@ -20,6 +25,11 @@ def singleton(cls):
 
 
 def init_logger(name):
+    """初始化日志记录器
+
+    Args:
+        name (str): 日志记录器名称
+    """
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter(
@@ -42,8 +52,15 @@ def init_logger(name):
 
 
 class BaseConfig(object):
+    """Web服务器基本配置类
+
+    Args:
+        object (object): 基类
+    """
+    # 密钥，用于防止跨站脚本攻击
     SECRET_KEY = os.environ.get(
         'SECRET_KEY') or "pBw%E7feV!!tJZuP3f&QPz2%ola*2IyE"
+    # 扫描任务目录
     SCAN_TASK_PATH = os.path.join(basedir, "scan_task")
 
     @staticmethod
@@ -52,6 +69,11 @@ class BaseConfig(object):
 
 
 class DevelopmentConfig(BaseConfig):
+    """开发配置类
+
+    Args:
+        BaseConfig (BaseConfig): Web服务器配置基类
+    """
     DEBUG = True
     PORT = 5000
     HOST = "127.0.0.1"
@@ -61,30 +83,45 @@ class DevelopmentConfig(BaseConfig):
         # app.debug = DevelopmentConfig.DEBUG
         # app.port = DevelopmentConfig.PORT
         # app.host = DevelopmentConfig.HOST
-
         init_logger("Server")
 
 
 class TestingConfig(BaseConfig):
+    """测试配置类
+
+    Args:
+        BaseConfig (BaseConfig): Web服务器配置基类
+    """
     TEST = True
     PORT = 5000
     HOST = "127.0.0.1"
-    # SERVER_NAME = "{}:{}".format(HOST, PORT)
 
 
 class ProductionConfig(BaseConfig):
+    """产品配置类，为最终部署时配置类
+
+    Args:
+        BaseConfig (BaseConfig): Web服务器配置基类
+    """
+    # 关闭调试模式
     DEBUG = False
+    # Web服务端口
     PORT = 80
-    # HOST = "192.168.3.2"
+    # Web服务器IP，更换服务器时需要修改该IP
     HOST = "192.168.43.137"
-    # SERVER_NAME = "{}:{}".format(HOST, PORT)
 
     @staticmethod
     def init_app(app):
+        """初始化Web应用
+
+        Args:
+            app (app): Flask app
+        """
         app.debug = ProductionConfig.DEBUG
         app.port = ProductionConfig.PORT
         app.host = ProductionConfig.HOST
 
+        # 初始化日志记录器
         init_logger("Server")
         logger = logging.getLogger("Server")
         logger.info("Web Server is running <{}:{}>...".format(
