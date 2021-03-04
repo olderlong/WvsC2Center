@@ -7,13 +7,19 @@ from config import singleton
 
 @singleton
 class AgentsState(object):
+    """代理状态类
+
+    Args:
+        object ([type]): [description]
+    """
     def __init__(self):
         self.agent_list = []
 
     def has(self, state):
         identifier = "{}_{}".format(state["Name"], state["Address"][0])
         for i in range(len(self.agent_list)):
-            wvs_identifier = "{}_{}".format(self.agent_list[i]["Name"], self.agent_list[i]["Address"][0])
+            wvs_identifier = "{}_{}".format(self.agent_list[i]["Name"],
+                                            self.agent_list[i]["Address"][0])
             if wvs_identifier == identifier:
                 return True, i
 
@@ -21,7 +27,8 @@ class AgentsState(object):
 
     def add_agent_state(self, state):
         existed, index = self.has(state)
-        state["Timestamp"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(state["Timestamp"]))
+        state["Timestamp"] = time.strftime("%Y/%m/%d %H:%M:%S",
+                                           time.localtime(state["Timestamp"]))
         if not existed:
             self.agent_list.append(state)
         else:

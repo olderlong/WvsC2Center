@@ -3,8 +3,11 @@
 
 from config import basedir, singleton
 
+
 @singleton
 class ScanSetting:
+    """扫描设置类
+    """
     def __init__(self, name=None, url="", policy="Normal"):
         self.start_url = url
         self.scan_policy = policy

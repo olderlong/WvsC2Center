@@ -3,6 +3,8 @@
 
 
 class GlobalVar:
+    """全局变量类
+    """
     ServerState = "Stopped"
     ScanState = "Stopped"
     SocketIO = None

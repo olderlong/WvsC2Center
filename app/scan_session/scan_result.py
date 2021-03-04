@@ -2,8 +2,11 @@
 
 from config import singleton
 
+
 @singleton
 class ScanResult:
+    """扫描结果类
+    """
     def __init__(self):
         self.wvs_result_list = []
 
